@@ -1,4 +1,3 @@
-
 package com.aurum;
 
 import org.springframework.boot.test.context.SpringBootTest;
