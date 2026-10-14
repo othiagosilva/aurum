@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: aurum
+  datasource:
+    url: jdbc:postgresql://localhost:5432/aurum
+    username: aurum
+    password: aurum_dev_password
+  jpa:
+    hibernate:
+      ddl-auto: none
+  flyaway:
+    enabled: true
