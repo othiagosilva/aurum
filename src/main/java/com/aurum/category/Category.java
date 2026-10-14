@@ -11,18 +11,32 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "categories")
 public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
+
+	@Column(nullable = false, length = 100)
 	private String name;
+
+	@Column(name = "created_at", nullable = false)
 	private Instant createdAt;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "type", nullable = false)
+	@Column(nullable = false)
 	private CategoryType type;
+
+	protected Category() {
+	}
+
+	public Category(String name, CategoryType type) {
+		this.name = name;
+		this.type = type;
+	}
 
 	public UUID getId() {
 		return id;
