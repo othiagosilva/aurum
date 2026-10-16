@@ -1,19 +1,20 @@
+
 package com.aurum;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
-@Testcontainers
 @SpringBootTest
 public abstract class AbstractIntegrationTest {
 
-	@Container
 	static final PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:17").withDatabaseName("aurum")
 			.withUsername("aurum").withPassword("aurum_test_password");
+
+	static {
+		postgres.start();
+	}
 
 	@DynamicPropertySource
 	static void configureProperties(DynamicPropertyRegistry registry) {
