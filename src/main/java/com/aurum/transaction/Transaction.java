@@ -45,7 +45,6 @@ public class Transaction {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "category_id", nullable = false)
-	@Column(name = "category_id", nullable = false)
 	private Category category;
 
 	protected Transaction() {
