@@ -45,6 +45,7 @@ class CategoryPersistenceTest extends AbstractIntegrationTest {
 	}
 
 	@Test
+	@Transactional
 	void shouldRejectCategoriesWithSameNameAndTypeIgnoringCase() {
 		UUID firstId = UUID.randomUUID();
 		UUID duplicateId = UUID.randomUUID();
