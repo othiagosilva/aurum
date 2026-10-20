@@ -37,11 +37,11 @@ public class CategoryCreateTest {
 		when(categoryRepository.existsByNameIgnoreCaseAndType(request.name(), request.type())).thenReturn(false);
 		when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-		Category result = categoryService.create(request);
+		CategoryResponse result = categoryService.create(request);
 
 		assertNotNull(result);
-		assertEquals("Alimentação", result.getName());
-		assertEquals(CategoryType.EXPENSE, result.getType());
+		assertEquals("Alimentação", result.name());
+		assertEquals(CategoryType.EXPENSE, result.type());
 
 		verify(categoryRepository).existsByNameIgnoreCaseAndType(request.name(), request.type());
 		verify(categoryRepository).save(any(Category.class));

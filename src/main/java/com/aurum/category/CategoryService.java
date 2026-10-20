@@ -16,7 +16,7 @@ public class CategoryService {
 	}
 
 	@Transactional
-	public Category create(CreateCategoryRequest request) {
+	public CategoryResponse create(CreateCategoryRequest request) {
 
 		if (categoryRepository.existsByNameIgnoreCaseAndType(request.name(), request.type())) {
 			throw new CategoryAlreadyExistsException();
@@ -24,7 +24,9 @@ public class CategoryService {
 
 		Category category = new Category(request.name(), request.type());
 
-		return categoryRepository.save(category);
+		categoryRepository.save(category);
+
+		return toCategoryResponse(category);
 	}
 
 	public List<CategoryResponse> findAll() {
