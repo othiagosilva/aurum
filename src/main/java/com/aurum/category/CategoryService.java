@@ -1,0 +1,41 @@
+package com.aurum.category;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.aurum.category.exception.CategoryAlreadyExistsException;
+
+@Service
+public class CategoryService {
+	private final CategoryRepository categoryRepository;
+
+	public CategoryService(CategoryRepository categoryRepository) {
+		this.categoryRepository = categoryRepository;
+	}
+
+	@Transactional
+	public Category create(CreateCategoryRequest request) {
+
+		if (categoryRepository.existsByNameIgnoreCaseAndType(request.name(), request.type())) {
+			throw new CategoryAlreadyExistsException();
+		}
+
+		Category category = new Category(request.name(), request.type());
+
+		return categoryRepository.save(category);
+	}
+
+	public List<CategoryResponse> findAll() {
+		return categoryRepository.findAll().stream().map(this::toCategoryResponse).toList();
+	}
+
+	public CategoryResponse toCategoryResponse(Category category) {
+		CategoryResponse categoryResponse = new CategoryResponse(category.getId(), category.getName(),
+				category.getType());
+
+		return categoryResponse;
+	}
+
+}
