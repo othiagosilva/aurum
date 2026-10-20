@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,9 +30,6 @@ class FindAllCategoriesTest {
 
 	@Test
 	void shouldReturnAllCategoriesAsResponses() {
-		UUID foodId = UUID.randomUUID();
-		UUID salaryId = UUID.randomUUID();
-
 		Category food = new Category("Alimentação", CategoryType.EXPENSE);
 		Category salary = new Category("Salário", CategoryType.INCOME);
 
