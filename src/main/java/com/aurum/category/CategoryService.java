@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.aurum.category.exception.CategoryAlreadyExistsException;
+import com.aurum.category.exception.CategoryIsNotActiveException;
 import com.aurum.category.exception.CategoryNotFoundException;
 
 @Service
@@ -38,24 +39,28 @@ public class CategoryService {
 
 	public CategoryResponse findById(UUID id) {
 		Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
-		CategoryResponse response = toCategoryResponse(category);
-		return response;
+		return toCategoryResponse(category);
 	}
 
 	@Transactional
 	public CategoryResponse update(UUID id, CreateCategoryRequest request) {
 		Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
 
-		Optional<Category> existingCategory = categoryRepository.findByNameIgnoreCaseAndType(request.name(),
-				request.type());
+		if (category.isActive()) {
+			Optional<Category> existingCategory = categoryRepository.findByNameIgnoreCaseAndType(request.name(),
+					request.type());
 
-		if (existingCategory.isPresent() && !existingCategory.get().getId().equals(id)) {
-			throw new CategoryAlreadyExistsException();
+			if (existingCategory.isPresent() && !existingCategory.get().getId().equals(id)) {
+				throw new CategoryAlreadyExistsException();
+			}
+
+			category.update(request.name(), request.type());
+
+			return toCategoryResponse(category);
+		} else {
+			throw new CategoryIsNotActiveException();
 		}
 
-		category.update(request.name(), request.type());
-
-		return toCategoryResponse(category);
 	}
 
 	@Transactional
@@ -67,7 +72,7 @@ public class CategoryService {
 		return toCategoryResponse(category);
 	}
 
-	public CategoryResponse toCategoryResponse(Category category) {
+	private CategoryResponse toCategoryResponse(Category category) {
 		CategoryResponse categoryResponse = new CategoryResponse(category.getId(), category.getName(),
 				category.getType());
 
