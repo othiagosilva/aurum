@@ -31,6 +31,9 @@ public class Category {
 	@Column(name = "created_at", nullable = false)
 	private Instant createdAt;
 
+	@Column(nullable = false)
+	private boolean active = true;
+
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -64,5 +67,18 @@ public class Category {
 	public void onCreate() {
 		Instant now = Instant.now();
 		this.createdAt = now;
+	}
+
+	public void update(String name, CategoryType type) {
+		this.name = name;
+		this.type = type;
+	}
+
+	public void deactivate() {
+		this.active = false;
+	}
+
+	public boolean isActive() {
+		return this.active;
 	}
 }

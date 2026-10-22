@@ -2,6 +2,8 @@ package com.aurum.category;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.UUID;
 
@@ -19,6 +21,12 @@ class CategoryPersistenceTest extends AbstractIntegrationTest {
 
 	@Autowired
 	private EntityManager entityManager;
+
+	@Autowired
+	private CategoryService categoryService;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -59,5 +67,26 @@ class CategoryPersistenceTest extends AbstractIntegrationTest {
 				INSERT INTO categories (id, name, type)
 				VALUES (?, ?, ?)
 				""", duplicateId, "alimentação", "EXPENSE")).isInstanceOf(DataIntegrityViolationException.class);
+	}
+
+	@Test
+	@Transactional
+	void shouldPersistCategoryDeactivation() {
+
+		Category category = new Category("Alimentação", CategoryType.EXPENSE);
+
+		Category savedCategory = categoryRepository.saveAndFlush(category);
+		UUID categoryId = savedCategory.getId();
+
+		categoryService.delete(categoryId);
+
+		entityManager.flush();
+		entityManager.clear();
+
+		Category persistedCategory = categoryRepository.findById(categoryId).orElseThrow();
+
+		assertFalse(persistedCategory.isActive());
+		assertEquals(categoryId, persistedCategory.getId());
+
 	}
 }
