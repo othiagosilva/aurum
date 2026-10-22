@@ -1,6 +1,7 @@
 package com.aurum.category;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -39,6 +40,31 @@ public class CategoryService {
 		Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
 		CategoryResponse response = toCategoryResponse(category);
 		return response;
+	}
+
+	@Transactional
+	public CategoryResponse update(UUID id, CreateCategoryRequest request) {
+		Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+
+		Optional<Category> existingCategory = categoryRepository.findByNameIgnoreCaseAndType(request.name(),
+				request.type());
+
+		if (existingCategory.isPresent() && !existingCategory.get().getId().equals(id)) {
+			throw new CategoryAlreadyExistsException();
+		}
+
+		category.update(request.name(), request.type());
+
+		return toCategoryResponse(category);
+	}
+
+	@Transactional
+	public CategoryResponse delete(UUID id) {
+		Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+
+		category.deactivate();
+
+		return toCategoryResponse(category);
 	}
 
 	public CategoryResponse toCategoryResponse(Category category) {
